@@ -12,6 +12,7 @@
 
     // Creeper
     const creeper = new Creeper();
+    creeper.toggleAnimate();
     scene.add( creeper );
 
     // Ground
@@ -59,6 +60,8 @@
     // Start rendering.
     function render() {
       navTool.update();
+
+      creeper.animate();
 
       requestAnimationFrame( render );
       renderer.render( scene, camera );

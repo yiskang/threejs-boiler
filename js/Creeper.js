@@ -8,6 +8,14 @@ class Creeper extends THREE.Group {
     super();
 
     this.init();
+
+    this.rotateHeadOffset = 0;
+    this.walkOffset = 0;
+    this.scaleHeadOffset = 0;
+
+    this.walking = false;
+    this.headSwinging = false;
+    this.bodyScaking = false;
   }
 
   init() {
@@ -83,5 +91,45 @@ class Creeper extends THREE.Group {
     this.add( this.head );
     this.add( this.body );
     this.add( this.feet );
+  }
+
+  feetAminate() {
+    if( !this.walking ) return;
+
+    this.walkOffset += 0.04;
+
+    this.foot1.rotation.x = Math.sin( this.walkOffset ) / 4; // 前腳左
+    this.foot2.rotation.x = -Math.sin( this.walkOffset ) / 4; // 後腳左
+    this.foot3.rotation.x = -Math.sin( this.walkOffset ) / 4; // 前腳右
+    this.foot4.rotation.x = Math.sin( this.walkOffset ) / 4; // 後腳右
+  }
+
+  headAnimate() {
+    if( !this.headSwinging ) return;
+
+    this.rotateHeadOffset += 0.04;
+
+    this.head.rotation.y = Math.sin( this.rotateHeadOffset );
+  }
+
+  bodyAnimate() {
+    if( !this.bodyScaling ) return;
+
+    this.scaleHeadOffset += 0.04;
+
+    const scaleRate = Math.abs( Math.sin( this.scaleHeadOffset ) ) / 16 + 1;
+    this.scale.set( scaleRate, scaleRate, scaleRate );
+  }
+
+  toggleAnimate() {
+    this.headSwinging = !this.headSwinging;
+    this.bodyScaling = !this.bodyScaling;
+    this.walking = !this.walking;
+  }
+
+  animate() {
+    this.headAnimate();
+    this.bodyAnimate();
+    this.feetAminate();
   }
 }
