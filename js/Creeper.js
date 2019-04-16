@@ -17,18 +17,47 @@ class Creeper extends THREE.Group {
     const footGeo = new THREE.BoxGeometry( 2, 3, 2 );
 
     // Skin Color
-    const creeperMat = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+    // Face texture
+    const faceMap = new THREE.TextureLoader().load(
+      'img/creeper_face.png'
+    );
+
+    // Skin texture
+    const skinMap = new THREE.TextureLoader().load(
+      'img/creeper_skin.png'
+    );
+
+    // Body and feet material
+    const skinMat = new THREE.MeshStandardMaterial({
+      roughness: 0.3,
+      metalness: 0.8,
+      transparent: true,
+      opacity: 0.9,
+      side: THREE.DoubleSide,
+      map: skinMap,
+    });
+
+    // Head and face material
+    const headMaterials = [];
+    for( let i = 0; i < 6; i++ ) {
+      let map;
+
+      if( i === 4 ) map = faceMap;
+      else map = skinMap;
+
+      headMaterials.push(new THREE.MeshStandardMaterial({ map: map }));
+    }
 
     // head
-    this.head = new THREE.Mesh( headGeo, creeperMat );
+    this.head = new THREE.Mesh( headGeo, headMaterials );
     this.head.position.set( 0, 6, 0 );
 
     // body
-    this.body = new THREE.Mesh( bodyGeo, creeperMat );
+    this.body = new THREE.Mesh( bodyGeo, skinMat );
     this.body.position.set( 0, 0, 0 );
 
     // 4 feet
-    this.foot1 = new THREE.Mesh( footGeo, creeperMat );
+    this.foot1 = new THREE.Mesh( footGeo, skinMat );
     this.foot1.position.set( -1, -5.5, 2 );
     this.foot2 = this.foot1.clone();
     this.foot2.position.set( -1, -5.5, -2 );
