@@ -33,9 +33,12 @@
     navTool.dampingFactor = 0.25;
   
     // Set up stage light
-    const spotLight = new THREE.SpotLight( 0xffffff );
-    spotLight.position.set( -10, 40, 30 );
+    const spotLight = new THREE.SpotLight( 0xffffff, 5, 100 );
+    spotLight.position.set( -10, 20, 20 );
     scene.add( spotLight );
+
+    const ambientLight = new THREE.AmbientLight( 0x404040 );
+    scene.add( ambientLight );
   
     // Set up renderer
     const renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -49,7 +52,7 @@
     // Start rendering.
     function render() {
       navTool.update();
-      
+
       requestAnimationFrame( render );
       renderer.render( scene, camera );
     }
