@@ -15,11 +15,12 @@
     scene.add( creeper );
 
     // Ground
-    const planeGeometry = new THREE.PlaneGeometry( 60, 60 );
+    const planeGeometry = new THREE.PlaneGeometry( 80, 80 );
     const planeMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
     const plane = new THREE.Mesh( planeGeometry, planeMaterial );
     plane.rotation.x = -0.5 * Math.PI;
     plane.position.set( 0, -7, 0 );
+    plane.receiveShadow = true;
     scene.add( plane );
   
     // Add camera
@@ -37,6 +38,11 @@
     spotLight.position.set( -10, 20, 20 );
     scene.add( spotLight );
 
+    const pointLight = new THREE.PointLight( 0xccffcc, 1, 100 );
+    pointLight.castShadow = true;
+    pointLight.position.set( -30, 30, 30 );
+    scene.add( pointLight );
+
     const ambientLight = new THREE.AmbientLight( 0x404040 );
     scene.add( ambientLight );
   
@@ -44,8 +50,9 @@
     const renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
-    renderer.setClearColor( 0xeeeeee, 1.0 );
-    renderer.shadowMap.enable = true;
+    //renderer.setClearColor( 0xeeeeee, 1.0 );
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   
     document.body.appendChild( renderer.domElement );
   

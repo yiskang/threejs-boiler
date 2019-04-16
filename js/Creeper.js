@@ -50,14 +50,20 @@ class Creeper extends THREE.Group {
 
     // head
     this.head = new THREE.Mesh( headGeo, headMaterials );
+    this.head.castShadow = true;
+    this.head.receiveShadow = true;
     this.head.position.set( 0, 6, 0 );
 
     // body
     this.body = new THREE.Mesh( bodyGeo, skinMat );
+    this.body.castShadow = true;
+    this.body.receiveShadow = true;
     this.body.position.set( 0, 0, 0 );
 
     // 4 feet
     this.foot1 = new THREE.Mesh( footGeo, skinMat );
+    this.foot1.castShadow = true;
+    this.foot1.receiveShadow = true;
     this.foot1.position.set( -1, -5.5, 2 );
     this.foot2 = this.foot1.clone();
     this.foot2.position.set( -1, -5.5, -2 );
