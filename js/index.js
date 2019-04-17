@@ -23,6 +23,9 @@
     plane.position.set( 0, -7, 0 );
     plane.receiveShadow = true;
     scene.add( plane );
+
+    // Ray helper
+    const rayHelper = new RayHelper();
   
     // Add camera
     const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -75,6 +78,39 @@
       camera.updateProjectionMatrix();
 
       renderer.setSize( window.innerWidth, window.innerHeight );
+    });
+
+    renderer.domElement.addEventListener( 'dblclick', function( event ) {
+      rayHelper.detach( scene );
+
+      const raycaster = new THREE.Raycaster();
+      const mouse = new THREE.Vector2();
+
+      // Project mouse point from screen viewport coordinate system into 3D world coordinate system
+      mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	    mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+      raycaster.setFromCamera( mouse.clone(), camera );
+      
+      const intersects = raycaster.intersectObjects( creeper.children );
+
+      rayHelper.attach( raycaster, scene );
+
+      console.log( intersects );
+
+      const result = intersects[0];
+
+      if( !result ) return;
+
+      const hitPoint = result.point;
+      const backVec = hitPoint.clone().add( raycaster.ray.direction.clone().setLength( 10000 ) );
+      const backVecH = backVec.projectOnPlane( new THREE.Vector3( 0, 1, 0 ) );
+      backVecH.normalize();
+
+      const backwardVec = backVecH.multiplyScalar( 5 );
+      const newPos = creeper.position.clone().add( backwardVec );
+
+      creeper.position.set( newPos.x, newPos.y, newPos.z );
     });
 
 })();

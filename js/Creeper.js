@@ -98,10 +98,10 @@ class Creeper extends THREE.Group {
 
     this.walkOffset += 0.04;
 
-    this.foot1.rotation.x = Math.sin( this.walkOffset ) / 4; // 前腳左
-    this.foot2.rotation.x = -Math.sin( this.walkOffset ) / 4; // 後腳左
-    this.foot3.rotation.x = -Math.sin( this.walkOffset ) / 4; // 前腳右
-    this.foot4.rotation.x = Math.sin( this.walkOffset ) / 4; // 後腳右
+    this.foot1.rotation.x = Math.sin( this.walkOffset ) / 4; // left front foot
+    this.foot2.rotation.x = -Math.sin( this.walkOffset ) / 4; // left back foot
+    this.foot3.rotation.x = -Math.sin( this.walkOffset ) / 4; // Right front foot
+    this.foot4.rotation.x = Math.sin( this.walkOffset ) / 4; // Right back foot
   }
 
   headAnimate() {
