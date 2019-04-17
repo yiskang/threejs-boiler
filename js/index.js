@@ -11,9 +11,8 @@
     scene.add( axes );
 
     // Creeper
-    const creeper = new Creeper();
+    const creeper = new Creeper( scene );
     creeper.toggleAnimate();
-    scene.add( creeper );
 
     // Ground
     const planeGeometry = new THREE.PlaneGeometry( 80, 80 );
@@ -111,6 +110,14 @@
       const newPos = creeper.position.clone().add( backwardVec );
 
       creeper.position.set( newPos.x, newPos.y, newPos.z );
+      creeper.trigger();
+    });
+
+    const resetBtn = document.getElementById( 'reset' );
+    resetBtn.addEventListener( 'click', function() {
+      rayHelper.detach( scene );
+
+      creeper.reset();
     });
 
 })();

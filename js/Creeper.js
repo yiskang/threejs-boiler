@@ -4,8 +4,10 @@
  */
 
 class Creeper extends THREE.Group {
-  constructor() {
+  constructor( scene ) {
     super();
+
+    this.scene = scene;
 
     this.init();
 
@@ -16,6 +18,10 @@ class Creeper extends THREE.Group {
     this.walking = false;
     this.headSwinging = false;
     this.bodyScaking = false;
+
+    this.counter = 0;
+    this.explosions = [];
+    this.isExposed = false;
   }
 
   init() {
@@ -91,6 +97,8 @@ class Creeper extends THREE.Group {
     this.add( this.head );
     this.add( this.body );
     this.add( this.feet );
+
+    this.scene.add( this );
   }
 
   feetAminate() {
@@ -127,9 +135,66 @@ class Creeper extends THREE.Group {
     this.walking = !this.walking;
   }
 
+  explosionAnimate() {
+    if( !this.isExposed ) return;
+
+    for( let i=0; i < this.explosions.length; i++ ) {
+      this.explosions[i].update();
+    }
+  }
+
   animate() {
     this.headAnimate();
     this.bodyAnimate();
     this.feetAminate();
+
+    this.explosionAnimate();
+  }
+
+  trigger() {
+    this.counter++;
+
+    if( this.counter < 3 ) return;
+
+    setTimeout(() => {
+      this.explosion();
+    }, 100 );
+  }
+
+  explosion() {
+    this.rotateHeadOffset = 0;
+    this.walkOffset = 0;
+    this.scaleHeadOffset = 0;
+
+    this.walking = false;
+    this.headSwinging = false;
+    this.bodyScaking = false;
+    this.counter = 0;
+
+    const scene = this.scene;
+    scene.remove( this );
+
+    this.explosions[0] = new Explosion( 0, 0, 0, 0x000000, scene );
+    this.explosions[1] = new Explosion( 5, 5, 5, 0x333333, scene );
+    this.explosions[2] = new Explosion( -5, 5, 10, 0x666666, scene );
+    this.explosions[3] = new Explosion( -5, 5, 5, 0x999999, scene );
+    this.explosions[4] = new Explosion( 5, 5, -5, 0xcccccc, scene );
+
+    this.isExposed = true;
+  }
+
+  reset() {
+    if( !this.isExposed ) return;
+
+    for( let i=0; i < this.explosions.length; i++ ) {
+      this.explosions[i].destroy();
+    }
+
+    this.explosions.length = 0;
+
+    this.isExposed = false;
+
+    this.scene.add( this );
+    this.position.set( 0, 0, 0 );
   }
 }

@@ -3,3 +3,7 @@ body {
   background-color: #000000;
   overflow: hidden;
 }
+
+button#reset {
+  z-index: 10;
+}
