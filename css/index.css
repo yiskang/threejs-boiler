@@ -4,6 +4,7 @@ body {
   overflow: hidden;
 }
 
-button#reset {
+button#animate {
   z-index: 10;
-}
+  position: absolute;
+} 
