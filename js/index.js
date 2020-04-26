@@ -1,6 +1,5 @@
 // Put your three.js codes below
 (function() {
-
     // Prepare stage scene
     const scene = new THREE.Scene();
 
@@ -12,6 +11,7 @@
 
     // Creeper
     const creeper = new Creeper();
+    creeper.position.set( 0, 0, -15 );
     scene.add( creeper );
     creeper.toggleAnimate();
 
@@ -27,12 +27,27 @@
     scene.add( plane );
   
     // Add camera
-    const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
-    camera.position.set( 30, 30, 30 );
-    camera.lookAt( scene.position );
+    const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+    // Add PhysicsEngine
+    const physicsEngine = new PhysicsEngine();
+    physicsEngine.initialize();
+    physicsEngine.mock( scene, 30 );
+
+    let groundShape = new CANNON.Plane()
+    let groundCM = new CANNON.Material()
+    groundBody = new CANNON.Body({
+      mass: 0,
+      shape: groundShape,
+      material: groundCM
+    })
+    // setFromAxisAngle 旋轉 x 軸 -90 度
+    groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2)
+    groundBody.position.set( 0, -7, 0 );
+    physicsEngine.world.add(groundBody);
 
     // Add navigation tool
-    const navTool = new NavigationTool( camera );
+    const navTool = new NavigationTool( camera, physicsEngine.sphereBody );
     navTool.attach( scene );
   
     // Set up stage light
@@ -60,7 +75,9 @@
     function render() {
       requestAnimationFrame( render );
 
-      navTool.update( scene );
+      navTool.update( scene, () => {
+        physicsEngine.update( navTool );
+      });
       creeper.animate();
       renderer.render( scene, camera );
     }
