@@ -7,13 +7,7 @@
 
     // Axes helper
     const axes = new THREE.AxesHelper( 20 );
-    scene.add( axes ); 
-
-    // Creeper
-    const creeper = new Creeper();
-    creeper.position.set( 0, 0, -15 );
-    scene.add( creeper );
-    creeper.toggleAnimate();
+    scene.add( axes );
 
     // Ground
     const planeGeometry = new THREE.PlaneGeometry( 300, 300, 50, 50 );
@@ -22,7 +16,6 @@
     plane.receiveShadow = true; 
 
     plane.rotation.x = -0.5 * Math.PI;
-    plane.position.set( 0, -7, 0 );
     plane.name = 'floor';
     scene.add( plane );
   
@@ -30,21 +23,24 @@
     const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 
     // Add PhysicsEngine
-    const physicsEngine = new PhysicsEngine();
+    const physicsEngine = new PhysicsEngine( scene, camera );
     physicsEngine.initialize();
-    physicsEngine.mock( scene, 30 );
+    physicsEngine.mock( 10 );
 
-    let groundShape = new CANNON.Plane()
-    let groundCM = new CANNON.Material()
+    let groundShape = new CANNON.Plane();
     groundBody = new CANNON.Body({
       mass: 0,
       shape: groundShape,
-      material: groundCM
-    })
+      material: physicsEngine.physicsMaterial
+    });
     // setFromAxisAngle 旋轉 x 軸 -90 度
     groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI / 2)
-    groundBody.position.set( 0, -7, 0 );
-    physicsEngine.world.add(groundBody);
+    physicsEngine.world.add( groundBody );
+
+    const world = physicsEngine.world;
+
+    // Creeper
+    let creeper = new Creeper( 0.19, 10, scene, world );
 
     // Add navigation tool
     const navTool = new NavigationTool( camera, physicsEngine.sphereBody );
@@ -77,8 +73,8 @@
 
       navTool.update( scene, () => {
         physicsEngine.update( navTool );
+        creeper.update();
       });
-      creeper.animate();
       renderer.render( scene, camera );
     }
   
@@ -98,40 +94,47 @@
         creeper.toggleAnimate();
     });
 
-    const rayHelper = new RayHelper();
+  //  const rayHelper = new RayHelper();
 
-    renderer.domElement.addEventListener( 'dblclick', function( event ) {
-      rayHelper.detach( scene );
+  //   renderer.domElement.addEventListener( 'dblclick', function( event ) {
+  //     rayHelper.detach( scene );
 
-      const raycaster = new THREE.Raycaster();
-      const mouse = new THREE.Vector2()
+  //     const raycaster = new THREE.Raycaster();
+  //     const mouse = new THREE.Vector2()
   
-      mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-      mouse.y = -( event.clientY / window.innerHeight ) * 2 + 1;
+  //     mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+  //     mouse.y = -( event.clientY / window.innerHeight ) * 2 + 1;
   
-      raycaster.setFromCamera( mouse.clone(), camera );
+  //     raycaster.setFromCamera( mouse.clone(), camera );
       
-      rayHelper.attach( raycaster, scene );
+  //     rayHelper.attach( raycaster, scene );
 
   
-      const intersects = raycaster.intersectObjects( creeper.children );
+  //     const intersects = raycaster.intersectObjects( creeper.children );
   
-      console.log( intersects );
+  //     console.log( intersects );
   
-      const result = intersects[0];
+  //     const result = intersects[0];
   
-      if( !result ) return;
+  //     if( !result ) return;
 
-      console.log( result );
+  //     console.log( result );
 
-      const hitPoint = result.point;
-      const backVec = hitPoint.clone().add( raycaster.ray.direction.clone().setLength( 10000 ) );
-      const backVecH = backVec.projectOnPlane( new THREE.Vector3( 0, 1, 0 ) );
-      backVecH.normalize();
+  //     const hitPoint = result.point;
+  //     const backVec = hitPoint.clone().add( raycaster.ray.direction.clone().setLength( 10000 ) );
+  //     const backVecH = backVec.projectOnPlane( new THREE.Vector3( 0, 1, 0 ) );
+  //     backVecH.normalize();
 
-      const backwardVec = backVecH.multiplyScalar( 5 );
-      const newPos = creeper.position.clone().add( backwardVec );
-      creeper.position.set( newPos.x, newPos.y, newPos.z );
+  //     const backwardVec = backVecH.multiplyScalar( 5 );
+  //     const newPos = creeper.position.clone().add( backwardVec );
+  //     creeper.position.set( newPos.x, newPos.y, newPos.z );
+  // });
+
+  const resetBtn = document.getElementById( 'reset' );
+  resetBtn.addEventListener( 'click', function() {
+    creeper.dispose();
+
+    creeper = new Creeper( 0.19, 10, scene, world );
   });
 
 })();

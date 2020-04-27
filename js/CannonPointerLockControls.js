@@ -226,20 +226,16 @@ THREE.CannonPointerLockControls = function ( camera, domElement, cannonBody ) {
 
         if ( moveForward ){
             inputVelocity.z = -velocityFactor * delta;
-            console.log( 'moveForward',  inputVelocity );
         }
         if ( moveBackward ){
             inputVelocity.z = velocityFactor * delta;
-            console.log( 'moveBackward',  inputVelocity );
         }
 
         if ( moveLeft ){
             inputVelocity.x = -velocityFactor * delta;
-            console.log( 'moveLeft',  inputVelocity );
         }
         if ( moveRight ){
             inputVelocity.x = velocityFactor * delta;
-            console.log( 'moveRight',  inputVelocity );
         }
 
         // Convert velocity to world coordinates
@@ -254,7 +250,7 @@ THREE.CannonPointerLockControls = function ( camera, domElement, cannonBody ) {
         velocity.z += inputVelocity.z;
 
         yawObject.position.copy( cannonBody.position );
-        console.log ( yawObject.position );
+        console.log( yawObject.position );
     };
 
 	this.connect();

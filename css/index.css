@@ -16,6 +16,12 @@ button#animate {
   position: absolute;
 }
 
+button#reset {
+  z-index: 10;
+  position: absolute;
+  left: 60px;
+}
+
 #blocker {
   position: absolute;
   width: 100%;
